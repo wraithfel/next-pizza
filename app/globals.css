@@ -1,6 +1,16 @@
-@import "tailwindcss/preflight";
-
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
 
 @layer base {
   :root {
@@ -32,65 +42,41 @@
     --ring: 24.6 95% 53.1%;
     --radius: 1rem;
   }
-
-  html {
-    scroll-behavior: smooth;
-  }
-
-  @media screen and (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-  }
-
-  * {
-    font-family: var(--font-nunito), sans-serif;
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
-@layer components {
-  /* Пример:
-  .btn {
-    @apply inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground;
-  }
-  */
+* {
+  font-family: var(--font-nunito), sans-serif;
 }
 
-/* 5) Дополнительные утилиты */
+.scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  border-radius: 6px;
+  background: #fff;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #dbdadd;
+  border-radius: 6px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #dbdadd;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
 
-/* 6) Стиль скроллбара */
-.scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.scrollbar::-webkit-scrollbar-track {
-  border-radius: 6px;
-  background: #fff;
-}
-.scrollbar::-webkit-scrollbar-thumb {
-  background: #dbdadd;
-  border-radius: 6px;
-}
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #dbdadd;
-}
-
-/* 7) Стили для nprogress */
-#nprogress .bar {
-  @apply bg-primary !important;
-}
-#nprogress .peg {
-  @apply shadow-md shadow-primary !important;
-}
-#nprogress .spinner-icon {
-  @apply border-t-primary border-l-primary !important;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
