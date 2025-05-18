@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from "@/lib/utils";
 import React from "react";
 import { Title } from "./title";
 import { FilterCheckbox } from "./filter-checkbox";

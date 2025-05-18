@@ -21,6 +21,7 @@ const cats = [
 
 export const Categories: React.FC<Props> = ({ className }) => {
     const activeIndex = useCategoryStore((state) => state.activeId);
+    const setActiveIndex = useCategoryStore((state) => state.setActiveId);
     return (
         <div className={cn('flex flex-wrap gap-1 bg-gray-50 p-1 rounded-2xl', className)}>
             {cats.map(({id, name}, index) => (
