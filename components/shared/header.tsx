@@ -12,7 +12,7 @@ interface Props{
 export const Header: React.FC<Props> = ({className}) => {
     return (
         <header className = {cn('border border-b', className)}>
-        <Container className='flex items-center justify-between py-8'>
+        <Container className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 sm:py-6">
             {/* Левая часть */}
             <div>
                 <Image src="/logo.png" alt="Logo" width={35} height={35} />
@@ -30,7 +30,7 @@ export const Header: React.FC<Props> = ({className}) => {
             </Button>
             </div>
             <div>
-             <Button className="group relative overflow-x-hidden">
+             <Button size="default" className="group relative overflow-x-hidden">
               <b>520 ₽</b>
               <span className="h-full w-[1px] bg-white/30 mx-3" />
               <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">

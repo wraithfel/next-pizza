@@ -29,28 +29,26 @@ export default function Home() {
     </Container>
     <TopBar/>
 
-    <Container className=" mt-10 pb-14">
-      <div className="flex gap-[60px]">
+    <Container className="mt-10 pb-14">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-[60px]">
+        <aside className="w-full lg:w-[400px] mb-8 lg:mb-0">
+            <Filters />
+        </aside>
 
-        <div className="w-[400px]">
-          <Filters />
-        </div>
-
-        <div className="gap-1 ml-12">
-          <div className="flex flex-col gap-16">
-              {groups.map(group => (
-                <ProductsGroupList
-                  key={group.id}
-                  categoryId={group.id}
-                  title={group.title}
-                  items={group.items}
-                />
-              ))}
+        <div className="w-full lg:ml-12">
+              <div className="flex flex-col gap-16">
+                  {groups.map((group) => (
+                      <ProductsGroupList
+                      key={group.id}
+                      categoryId={group.id}
+                      title={group.title}
+                      items={group.items}
+                      />
+                    ))}
+                </div>
           </div>
-        </div>
-
       </div>
-    </Container>
+      </Container>
     </>
   )
 }

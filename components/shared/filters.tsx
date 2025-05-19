@@ -26,7 +26,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
             <Input type="number" placeholder="0" min={0} max={1000} defaultValue={0} />
             <Input type="number" min={100} max={1000} placeholder="1000" />
             </div>
-         <RangeSlider min={0} max={1000} step={10} value={[0, 1000]} />
+         <RangeSlider className="mx-2" min={0} max={1000} step={10} value={[0, 1000]} />
         </div> 
         <CheckboxFiltersGroup
         className="mt-5"
