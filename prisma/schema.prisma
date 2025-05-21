@@ -14,6 +14,7 @@ model User {
     email    String   @unique
     password String
     role     UserRole @default(USER)
+    verified Boolean  @default(false)
 
     provider   String?
     providerId String?
@@ -24,7 +25,6 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    cartId    Int
 }
 
 model Category {
