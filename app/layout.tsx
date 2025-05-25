@@ -1,8 +1,6 @@
-import type { Metadata } from 'next';
 import type { Viewport } from 'next'
 import { Nunito } from 'next/font/google';
 import './globals.css';
-import { Header } from '../components/shared'
 
 const nunito = Nunito({
   subsets: ['cyrillic'],
@@ -15,11 +13,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export const metadata: Metadata = {
-  title: 'Next Pizza',
-  description: 'Технологичный магазин пиццы',
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,10 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={nunito.className}>
-        <main className="min-h-screen">
-          <Header/>
-          <div>{children}</div>
-        </main>
+        {children}
       </body>
     </html>
   );
