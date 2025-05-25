@@ -31,7 +31,7 @@ export const ProductsGroupList: React.FC<Props> = ({
   const setActiveCategory  = useCategoryStore(s => s.setActiveId);
 
 
-  const entry = useIntersection(sectionRef as React.RefObject<HTMLElement>, { threshold: 0.2 });
+  const entry = useIntersection(sectionRef as React.RefObject<HTMLElement>, { threshold: 0.5 });
 
   useEffect(() => {
     if (!entry?.isIntersecting) return;

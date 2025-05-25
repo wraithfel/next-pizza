@@ -1,35 +1,42 @@
 'use client'
 
+import React, { JSX } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import React from 'react'
 import { cn } from '@/lib/utils'
 import { useCategoryStore } from '@/store/category'
+import { useCategories } from '@/hooks/useCategories'
 
 interface Props {
   className?: string
 }
 
-const cats = [
-  { id: 1, name: 'Пиццы' },
-  { id: 2, name: 'Комбо' },
-  { id: 3, name: 'Закуски' },
-  { id: 4, name: 'Коктейли' },
-  { id: 5, name: 'Кофе' },
-  { id: 6, name: 'Напитки' },
-  { id: 7, name: 'Десерты' },
-]
+export function Categories({ className }: Props): JSX.Element {
 
-export const Categories: React.FC<Props> = ({ className }) => {
-  const activeIndex = useCategoryStore((s) => s.activeId)
-  const setActive   = useCategoryStore((s) => s.setActiveId)
+  const { categories, loading} = useCategories()
+
+
+  const activeIndex = useCategoryStore(s => s.activeId)
+  const setActive   = useCategoryStore(s => s.setActiveId)
   const searchParams = useSearchParams()
+  const queryString  = searchParams.toString()
 
-  const queryString = searchParams.toString()
+  if (loading) {
+    return (
+    <div className={cn('flex flex-wrap gap-1 bg-gray-50 p-1 rounded-2xl', className)}>
+      {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-11 w-20 rounded-2xl bg-gray-200 animate-pulse"
+          />
+        ))}
+      </div>
+      )
+  }
 
   return (
     <div className={cn('flex flex-wrap gap-1 bg-gray-50 p-1 rounded-2xl', className)}>
-      {cats.map(({ id, name }) => {
+      {categories!.map(({ id, name }) => {
         const href = queryString
           ? `?${queryString}#${encodeURIComponent(name)}`
           : `#${encodeURIComponent(name)}`

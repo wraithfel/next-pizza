@@ -2,26 +2,20 @@ import { Container, ProductsGroupList} from "@/components/shared";
 import { Title } from "@/components/shared";
 import { TopBar } from "@/components/shared";
 import { Filters } from "@/components/shared";
-
-const dummyItems = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1,
-  name: 'Чиз Пицца',
-  imageUrl: 'https://media.dodostatic.net/image/r:584x584/11ee7d60fda22358ac33c6a44eb093a2.avif',
-  items: [{ price: 550 }],
-}));
-
-const groups = [
-  { id: 1, title: 'Пиццы',     items: dummyItems },
-  { id: 2, title: 'Комбо',      items: dummyItems },
-  { id: 3, title: 'Закуски',    items: dummyItems },
-  { id: 4, title: 'Коктейли',   items: dummyItems },
-  { id: 5, title: 'Кофе',       items: dummyItems },
-  { id: 6, title: 'Напитки',    items: dummyItems },
-  { id: 7, title: 'Десерты',    items: dummyItems },
-];
+import { prisma } from "@/prisma/prisma-client";
 
 
-export default function Home() {
+export default async function Home() {
+  const categories = await prisma.category.findMany({
+    include: {
+      products: {
+        include: {
+          items: true,
+          ingredients: true
+        }
+      }
+    }
+  })
   return(
     <>
     <Container className="mt-10">
@@ -37,12 +31,12 @@ export default function Home() {
 
         <div className="w-full lg:ml-12">
               <div className="flex flex-col gap-16">
-                  {groups.map((group) => (
+                  {categories.map((category) => (
                       <ProductsGroupList
-                      key={group.id}
-                      categoryId={group.id}
-                      title={group.title}
-                      items={group.items}
+                      key={category.id}
+                      categoryId={category.id}
+                      title={category.name}
+                      items={category.products}
                       />
                     ))}
                 </div>
