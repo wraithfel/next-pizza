@@ -19,10 +19,10 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
     <Dialog open onOpenChange={() => router.back()}>
       <DialogContent
         className={cn(
-          'flex flex-col p-0',
-          'w-[90vw] max-w-[1060px]',
-          'h-[170vh] max-h-[170vh]',
-          className
+          'w-full sm:w-[90vw] max-w-[1060px]',
+          'max-h-[90vh] overflow-y-auto',
+          'p-6 sm:p-8 rounded-2xl',
+          className,
         )}
       >
         <DialogTitle className="sr-only">{product.name}</DialogTitle>
@@ -30,7 +30,6 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
           imageUrl={product.imageUrl}
           name={product.name}
           ingredients={[]}
-          className="flex-1"
         />
       </DialogContent>
     </Dialog>
