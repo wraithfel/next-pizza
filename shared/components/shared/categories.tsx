@@ -3,9 +3,9 @@
 import React, { JSX } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { useCategoryStore } from '@/store/category'
-import { useCategories } from '@/hooks/useCategories'
+import { cn } from '@/shared/lib/utils'
+import { useCategoryStore } from '@/shared/store/category'
+import { useCategories } from '@/shared/hooks/useCategories'
 
 interface Props {
   className?: string

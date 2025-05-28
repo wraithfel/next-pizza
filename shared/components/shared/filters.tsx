@@ -4,7 +4,7 @@ import { Title } from './title';
 import { Input } from '../ui';
 import { CheckboxFiltersGroup } from './checkbox-filters-group';
 import { RangeSlider } from './range-slider';
-import { useFilters } from '@/hooks/useFilters';
+import { useFilters } from '@/shared/hooks/useFilters';
 
 export const Filters: React.FC<{ className?: string }> = ({ className }) => {
   const {

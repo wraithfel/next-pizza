@@ -1,7 +1,7 @@
-import { Container, ProductsGroupList} from "@/components/shared";
-import { Title } from "@/components/shared";
-import { TopBar } from "@/components/shared";
-import { Filters } from "@/components/shared";
+import { Container, ProductsGroupList} from "@/shared/components/shared";
+import { Title } from "@/shared/components/shared";
+import { TopBar } from "@/shared/components/shared";
+import { Filters } from "@/shared/components/shared";
 import { prisma } from "@/prisma/prisma-client";
 
 

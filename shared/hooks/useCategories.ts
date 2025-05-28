@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Api } from '@/services/api-client';
+import { Api } from '@/shared/services/api-client';
 import type { Category } from '@prisma/client';
 
 export const useCategories = () => {

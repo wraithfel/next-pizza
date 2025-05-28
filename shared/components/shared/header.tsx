@@ -1,6 +1,6 @@
-import {cn} from '@/lib/utils'
+import {cn} from '@/shared/lib/utils'
 import React from 'react';
-import { Container } from '../shared';
+import { Container } from '.';
 import Image from 'next/image';
 import { Button } from '../ui';
 import { ArrowRight, ShoppingCart, User } from 'lucide-react';

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { Viewport } from 'next'
-import { Header } from '@/components/shared'
+import { Header } from '@/shared/components/shared'
 
 export const viewport: Viewport = {
   width: 'device-width',
