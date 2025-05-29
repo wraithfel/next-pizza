@@ -23,9 +23,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 }) => {
   const [size, setSize] = React.useState<PizzaSize>(20)
   const [type, setType] = React.useState<PizzaType>(1)
-
   const [selectedIngredients, {toggle: addIngredient}] = useSet(new Set<number>([]))
-
   const pizzaPrice = items.find((item) => item.pizzaType === type && item.size === size)?.price
 
   return (
@@ -34,7 +32,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
         <ProductImage imageUrl={imageUrl} size={size} />
       </div>
 
-      <div className="flex flex-col flex-1 bg-[#f7f6f5] p-6 rounded-2xl">
+      <div className="flex flex-col flex-1 min-w-0 bg-[#f7f6f5] p-6 rounded-2xl">
         <div className="mb-4">
           <Title text={name} size="md" className="font-extrabold mb-1" />
           <p className="text-gray-400">30 см, традиционное тесто</p>
@@ -53,8 +51,8 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           />
         </div>
 
-        <div className="w-full max-w-full bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto scrollbar">
-          <div className="inline-grid grid-flow-col grid-rows-2 gap-3">
+        <div className="w-full max-w-full bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto overflow-y-hidden scrollbar min-w-0">
+          <div className="grid grid-flow-col auto-cols-[7rem] grid-rows-2 gap-3 w-max">
             {ingredients.map(ing => (
               <IngredientCard
                 key={ing.id}
@@ -67,7 +65,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
             ))}
           </div>
         </div>
-        
+
         <Button className="h-[55px] text-base rounded-[18px] w-full">
           Добавить в корзину за {pizzaPrice} ₽
         </Button>
@@ -75,4 +73,3 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     </div>
   )
 }
-

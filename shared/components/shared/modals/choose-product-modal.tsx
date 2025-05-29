@@ -23,7 +23,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
         <DialogContent
           className={cn(
             'w-full sm:w-[90vw] max-w-[1060px]',
-            'max-h-[90vh] overflow-y-auto',
+            'max-h-[90vh]',
             'p-6 sm:p-8 rounded-2xl overflow-hidden',
             className,
           )}>
