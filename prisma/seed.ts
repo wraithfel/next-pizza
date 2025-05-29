@@ -41,7 +41,7 @@ async function up() {
         'https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif',
       categoryId: 1,
       ingredients: {
-        connect: ingredients.slice(0, 5),
+        connect: ingredients.slice(0, 9),
       },
     },
   });
@@ -53,7 +53,7 @@ async function up() {
         'https://media.dodostatic.net/image/r:584x584/11ee7d610d2925109ab2e1c92cc5383c.avif',
       categoryId: 1,
       ingredients: {
-        connect: ingredients.slice(5, 10),
+        connect: ingredients.slice(3, 9),
       },
     },
   });
@@ -65,7 +65,7 @@ async function up() {
         'https://media.dodostatic.net/image/r:584x584/11ee7d61706d472f9a5d71eb94149304.avif',
       categoryId: 1,
       ingredients: {
-        connect: ingredients.slice(10, 40),
+        connect: ingredients.slice(1, 8),
       },
     },
   });
@@ -95,28 +95,28 @@ async function up() {
   await prisma.productItem.createMany({
     data: [
         // Пепперони фреш (pizza1)
-        { productId: pizza1.id, size: 26, price: 499, pizzaType: 1 },
-        { productId: pizza1.id, size: 26, price: 499, pizzaType: 2 },
+        { productId: pizza1.id, size: 20, price: 499, pizzaType: 1 },
+        { productId: pizza1.id, size: 20, price: 499, pizzaType: 2 },
         { productId: pizza1.id, size: 30, price: 699, pizzaType: 1 },
         { productId: pizza1.id, size: 30, price: 699, pizzaType: 2 },
-        { productId: pizza1.id, size: 35, price: 899, pizzaType: 1 },
-        { productId: pizza1.id, size: 35, price: 899, pizzaType: 2 },
+        { productId: pizza1.id, size: 40, price: 899, pizzaType: 1 },
+        { productId: pizza1.id, size: 40, price: 899, pizzaType: 2 },
 
         // Сырная (pizza2)
-        { productId: pizza2.id, size: 26, price: 450, pizzaType: 1 },
-        { productId: pizza2.id, size: 26, price: 450, pizzaType: 2 },
+        { productId: pizza2.id, size: 20, price: 450, pizzaType: 1 },
+        { productId: pizza2.id, size: 20, price: 450, pizzaType: 2 },
         { productId: pizza2.id, size: 30, price: 650, pizzaType: 1 },
         { productId: pizza2.id, size: 30, price: 650, pizzaType: 2 },
-        { productId: pizza2.id, size: 35, price: 850, pizzaType: 1 },
-        { productId: pizza2.id, size: 35, price: 850, pizzaType: 2 },
+        { productId: pizza2.id, size: 40, price: 850, pizzaType: 1 },
+        { productId: pizza2.id, size: 40, price: 850, pizzaType: 2 },
 
         // Чоризо фреш (pizza3)
-        { productId: pizza3.id, size: 26, price: 520, pizzaType: 1 },
-        { productId: pizza3.id, size: 26, price: 520, pizzaType: 2 },
+        { productId: pizza3.id, size: 20, price: 520, pizzaType: 1 },
+        { productId: pizza3.id, size: 20, price: 520, pizzaType: 2 },
         { productId: pizza3.id, size: 30, price: 720, pizzaType: 1 },
         { productId: pizza3.id, size: 30, price: 720, pizzaType: 2 },
-        { productId: pizza3.id, size: 35, price: 920, pizzaType: 1 },
-        { productId: pizza3.id, size: 35, price: 920, pizzaType: 2 },
+        { productId: pizza3.id, size: 40, price: 920, pizzaType: 1 },
+        { productId: pizza3.id, size: 40, price: 920, pizzaType: 2 },
     ],
   });
 

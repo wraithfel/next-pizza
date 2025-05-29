@@ -20,19 +20,19 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 
   return (
     <Dialog open onOpenChange={() => router.back()}>
-      <DialogContent
-        className={cn(
-          'w-full sm:w-[90vw] max-w-[1060px]',
-          'max-h-[90vh] overflow-y-auto',
-          'p-6 sm:p-8 rounded-2xl',
-          className,
-        )}
-      >
+        <DialogContent
+          className={cn(
+            'w-full sm:w-[90vw] max-w-[1060px]',
+            'max-h-[90vh] overflow-y-auto',
+            'p-6 sm:p-8 rounded-2xl overflow-hidden',
+            className,
+          )}>
         <DialogTitle className="sr-only">{product.name}</DialogTitle>
         {isPizzaForm ? (
           <ChoosePizzaForm imageUrl={product.imageUrl}
           name={product.name}
           ingredients={product.ingredients} 
+          items={product.items}
           />
         ): 
         <ChooseProductForm
