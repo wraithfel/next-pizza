@@ -8,8 +8,11 @@ export { Filters } from './filters';
 export { CheckboxFiltersGroup } from './checkbox-filters-group';
 export { ProductCard } from './product-card';
 export { ProductsGroupList } from './products-group-list';
-export {ProductImage} from './product-image';
-export {GroupVariants} from './group-variants';
+export { ProductImage } from './product-image';
+export { GroupVariants } from './group-variants';
 export {} from './modals/index';
-export {ChooseProductForm} from './choose-product-form'
+export { ChooseProductForm } from './choose-product-form';
+export { CartButton } from './cart-button';
+export { CartDrawer } from './cart-drawer';
+export { CountButton } from './count-button'
 
