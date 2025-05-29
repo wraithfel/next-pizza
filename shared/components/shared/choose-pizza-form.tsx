@@ -4,10 +4,11 @@ import { ProductImage } from './product-image'
 import { Title } from './title'
 import { Button } from '../ui'
 import { GroupVariants } from './group-variants'
-import { PizzaSize, pizzaSizes, PizzaType, pizzaTypes } from '@/shared/constants/pizza'
+import { mapPizzaType, PizzaSize, pizzaSizes, PizzaType, pizzaTypes } from '@/shared/constants/pizza'
 import { Ingredient, ProductItem } from '@prisma/client'
 import { IngredientCard } from './ingredient-card'
 import { useSet } from 'react-use'
+import { calcTotalPizzaPrice } from '@/shared/lib'
 
 interface Props {
   imageUrl: string
@@ -24,7 +25,20 @@ export const ChoosePizzaForm: React.FC<Props> = ({
   const [size, setSize] = React.useState<PizzaSize>(20)
   const [type, setType] = React.useState<PizzaType>(1)
   const [selectedIngredients, {toggle: addIngredient}] = useSet(new Set<number>([]))
-  const pizzaPrice = items.find((item) => item.pizzaType === type && item.size === size)?.price
+
+  const textDetails = `${size} см, ${mapPizzaType[type]} тесто`
+
+  const totalPrice = calcTotalPizzaPrice(type, size, items, ingredients, selectedIngredients)
+
+  const handleClickAdd = () => {
+    onClickAddCart?.();
+    console.log({
+      size,
+      type,
+      ingredients: selectedIngredients
+    })
+  }
+
 
   return (
     <div className={cn('flex flex-col md:flex-row gap-6 md:gap-10', className)}>
@@ -32,10 +46,10 @@ export const ChoosePizzaForm: React.FC<Props> = ({
         <ProductImage imageUrl={imageUrl} size={size} />
       </div>
 
-      <div className="flex flex-col flex-1 min-w-0 bg-[#f7f6f5] p-6 rounded-2xl">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden bg-[#f7f6f5] p-6 rounded-2xl">
         <div className="mb-4">
           <Title text={name} size="md" className="font-extrabold mb-1" />
-          <p className="text-gray-400">30 см, традиционное тесто</p>
+          <p className="text-gray-400">{textDetails}</p>
         </div>
 
         <div className="flex flex-col gap-4 mb-4">
@@ -51,8 +65,8 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           />
         </div>
 
-        <div className="w-full max-w-full bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto overflow-y-hidden scrollbar min-w-0">
-          <div className="grid grid-flow-col auto-cols-[7rem] grid-rows-2 gap-3 w-max">
+        <div className="w-[400px] bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto scrollbar">
+          <div className="grid grid-flow-col auto-cols-[7rem] grid-rows-2 gap-3 w-max min-w-full">
             {ingredients.map(ing => (
               <IngredientCard
                 key={ing.id}
@@ -66,8 +80,9 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <Button className="h-[55px] text-base rounded-[18px] w-full">
-          Добавить в корзину за {pizzaPrice} ₽
+        <Button className="h-[55px] text-base rounded-[18px] w-full"
+        onClick={handleClickAdd}>
+          Добавить в корзину за {totalPrice} ₽
         </Button>
       </div>
     </div>
