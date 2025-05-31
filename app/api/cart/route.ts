@@ -35,30 +35,26 @@ const recalcTotal = async (cartId: number) => {
 };
 
 export async function GET(req: NextRequest) {
-  try {
-    const token = req.cookies.get("cartToken")?.value;
+  const token = req.cookies.get("cartToken")?.value;
 
-    if (!token) {
-      return NextResponse.json({ totalAmount: 0, items: [] });
-    }
+  if (!token) {
+    return NextResponse.json({ totalAmount: 0, items: [] });
+  }
 
-    const userCart = await prisma.cart.findFirst({
-      where: { token },
-      include: {
-        items: {
-          orderBy: { createdAt: "desc" },
-          include: {
-            productItem: { include: { product: true } },
-            ingredients: true,
-          },
+  const userCart = await prisma.cart.findFirst({
+    where: { token },
+    include: {
+      items: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          productItem: { include: { product: true } },
+          ingredients: true,
         },
       },
-    });
+    },
+  });
 
-    return NextResponse.json(userCart);
-  } catch (error) {
-    console.log(error);
-  }
+  return NextResponse.json(userCart);
 }
 
 export async function POST(req: NextRequest) {
@@ -72,16 +68,34 @@ export async function POST(req: NextRequest) {
 
   const { productItemId, quantity, ingredientIds = [] } = await req.json();
 
-  await prisma.cartItem.create({
-    data: {
-      cartId: cart.id,
-      productItemId,
-      quantity,
-      ingredients: {
-        connect: ingredientIds.map((id: number) => ({ id })),
-      },
-    },
+  const existingItems = await prisma.cartItem.findMany({
+    where: { cartId: cart.id, productItemId },
+    include: { ingredients: true },
   });
+
+  let existing = existingItems.find(item => {
+    const existingIds = item.ingredients.map(ing => ing.id).sort();
+    const newIds = ingredientIds.slice().sort();
+    return JSON.stringify(existingIds) === JSON.stringify(newIds);
+  });
+
+  if (existing) {
+    await prisma.cartItem.update({
+      where: { id: existing.id },
+      data: { quantity: existing.quantity + quantity },
+    });
+  } else {
+    await prisma.cartItem.create({
+      data: {
+        cartId: cart.id,
+        productItemId,
+        quantity,
+        ingredients: {
+          connect: ingredientIds.map((id: number) => ({ id })),
+        },
+      },
+    });
+  }
 
   await recalcTotal(cart.id);
 

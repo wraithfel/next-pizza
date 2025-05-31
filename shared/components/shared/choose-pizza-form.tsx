@@ -1,58 +1,87 @@
-'use client'
+'use client';
 
-import { cn } from '@/shared/lib/utils'
-import React from 'react'
-import { ProductImage } from './product-image'
-import { Title } from './title'
-import { Button } from '../ui'
-import { GroupVariants } from './group-variants'
-import { mapPizzaType, PizzaSize, pizzaSizes, PizzaType, pizzaTypes } from '@/shared/constants/pizza'
-import { Ingredient, ProductItem } from '@prisma/client'
-import { IngredientCard } from './ingredient-card'
-import { useSet } from 'react-use'
-import { calcTotalPizzaPrice } from '@/shared/lib'
-import { useCartStore } from '@/shared/store'
-import { useRouter } from 'next/navigation'    
+import { cn } from '@/shared/lib/utils';
+import React from 'react';
+import { ProductImage } from './product-image';
+import { Title } from './title';
+import { Button } from '../ui';
+import { GroupVariants } from './group-variants';
+import {
+  mapPizzaType,
+  PizzaSize,
+  pizzaSizes,
+  PizzaType,
+  pizzaTypes,
+} from '@/shared/constants/pizza';
+import { Ingredient, ProductItem } from '@prisma/client';
+import { IngredientCard } from './ingredient-card';
+import { useSet } from 'react-use';
+import { calcTotalPizzaPrice } from '@/shared/lib';
+import { useCartStore } from '@/shared/store';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
 interface Props {
-  imageUrl: string
-  name: string
-  ingredients: Ingredient[]
-  items: ProductItem[]
-  onClickAddCart?: VoidFunction
-  className?: string
-  fullWidthIngredients?: boolean
+  imageUrl: string;
+  name: string;
+  ingredients: Ingredient[];
+  items: ProductItem[];
+  onClickAddCart?: VoidFunction;
+  className?: string;
+  fullWidthIngredients?: boolean;
 }
 
 export const ChoosePizzaForm: React.FC<Props> = ({
-  name, imageUrl, ingredients, items, onClickAddCart, className, fullWidthIngredients
+  name,
+  imageUrl,
+  ingredients,
+  items,
+  onClickAddCart,
+  className,
+  fullWidthIngredients,
 }) => {
-  const router = useRouter()
-  const [size, setSize] = React.useState<PizzaSize>(20)
-  const [type, setType] = React.useState<PizzaType>(1)
-  const [selectedIngredients, {toggle: addIngredient}] = useSet(new Set<number>([]))
+  const router = useRouter();
+  const [size, setSize] = React.useState<PizzaSize>(20);
+  const [type, setType] = React.useState<PizzaType>(1);
+  const [selectedIngredients, { toggle: addIngredient }] = useSet(
+    new Set<number>([])
+  );
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const textDetails = `${size} см, ${mapPizzaType[type]} тесто`
+  const textDetails = `${size} см, ${mapPizzaType[type]} тесто`;
+  const totalPrice = calcTotalPizzaPrice(
+    type,
+    size,
+    items,
+    ingredients,
+    selectedIngredients
+  );
 
-  const totalPrice = calcTotalPizzaPrice(type, size, items, ingredients, selectedIngredients)
-
-   const addCartItem = useCartStore(s => s.addCartItem)     
+  const addCartItem = useCartStore((s) => s.addCartItem);
+  const loading = useCartStore((s) => s.loading);
 
   const handleClickAdd = async () => {
+    if (loading || isProcessing) return;
     const productItem = items.find(
       (it) => it.size === size && it.pizzaType === type
-    )
-    if (!productItem) return                               
-
-    await addCartItem({
-      productItemId: productItem.id,
-      quantity: 1,
-      ingredientIds: Array.from(selectedIngredients),
-    })
-    onClickAddCart?.()
-    router.back();         
-  }
-
+    );
+    if (!productItem) return;
+    setIsProcessing(true);
+    try {
+      await addCartItem({
+        productItemId: productItem.id,
+        quantity: 1,
+        ingredientIds: Array.from(selectedIngredients),
+      });
+      toast.success('Пицца добавлена в корзину');
+      onClickAddCart?.();
+      router.back();
+    } catch {
+      toast.error('Не удалось добавить пиццу в корзину');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className={cn('flex flex-col md:flex-row gap-6 md:gap-10', className)}>
@@ -70,22 +99,23 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           <GroupVariants
             items={pizzaSizes}
             selectedValue={String(size)}
-            onClick={v => setSize(Number(v) as PizzaSize)}
+            onClick={(v) => setSize(Number(v) as PizzaSize)}
           />
           <GroupVariants
             items={pizzaTypes}
             selectedValue={String(type)}
-            onClick={v => setType(Number(v) as PizzaType)}
+            onClick={(v) => setType(Number(v) as PizzaType)}
           />
         </div>
 
-        <div className={cn(
+        <div
+          className={cn(
             fullWidthIngredients ? 'w-full' : 'w-[400px]',
             'bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto scrollbar'
           )}
         >
           <div className="grid grid-flow-col auto-cols-[7rem] grid-rows-2 gap-3 w-max min-w-full">
-            {ingredients.map(ing => (
+            {ingredients.map((ing) => (
               <IngredientCard
                 key={ing.id}
                 name={ing.name}
@@ -98,11 +128,14 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <Button className="h-[55px] text-base rounded-[18px] w-full"
-        onClick={handleClickAdd}>
+        <Button
+          className="h-[55px] text-base rounded-[18px] w-full"
+          onClick={handleClickAdd}
+          disabled={loading || isProcessing}
+        >
           Добавить в корзину за {totalPrice} ₽
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -24,6 +24,7 @@ export const ChooseProductForm: React.FC<Props> = ({
   className,
 }) => {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = React.useState(false);
 
   const productItem = items[0];
   const productItemId = productItem.id;
@@ -34,11 +35,14 @@ export const ChooseProductForm: React.FC<Props> = ({
   );
   const quantity = cartItem?.quantity ?? 0;
 
+  const loading = useCartStore((s) => s.loading);
   const addCartItem = useCartStore((s) => s.addCartItem);
   const updateQty = useCartStore((s) => s.updateItemQuantity);
   const removeItem = useCartStore((s) => s.removeCartItem);
 
   const handleAdd = async () => {
+    if (loading || isProcessing) return;
+    setIsProcessing(true);
     try {
       await addCartItem({
         productItemId,
@@ -49,35 +53,37 @@ export const ChooseProductForm: React.FC<Props> = ({
       router.back();
     } catch {
       toast.error('Не удалось добавить в корзину');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleIncrease = async () => {
-    if (cartItem) {
-      try {
-        await updateQty(cartItem.id, quantity + 1);
-      } catch {
-        toast.error('Не удалось обновить количество');
-      }
+    if (!cartItem || loading || isProcessing) return;
+    setIsProcessing(true);
+    try {
+      await updateQty(cartItem.id, quantity + 1);
+    } catch {
+      toast.error('Не удалось обновить количество');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleDecrease = async () => {
-    if (cartItem) {
+    if (!cartItem || loading || isProcessing) return;
+    setIsProcessing(true);
+    try {
       if (quantity > 1) {
-        try {
-          await updateQty(cartItem.id, quantity - 1);
-        } catch {
-          toast.error('Не удалось обновить количество');
-        }
+        await updateQty(cartItem.id, quantity - 1);
       } else {
-        try {
-          await removeItem(cartItem.id);
-          router.back();
-        } catch {
-          toast.error('Не удалось удалить из корзины');
-        }
+        await removeItem(cartItem.id);
+        router.back();
       }
+    } catch {
+      toast.error('Не удалось обновить корзину');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -105,6 +111,7 @@ export const ChooseProductForm: React.FC<Props> = ({
             <Button
               className="h-[55px] px-6 text-base rounded-[18px]"
               onClick={handleDecrease}
+              disabled={loading || isProcessing}
             >
               –
             </Button>
@@ -112,6 +119,7 @@ export const ChooseProductForm: React.FC<Props> = ({
             <Button
               className="h-[55px] px-6 text-base rounded-[18px]"
               onClick={handleIncrease}
+              disabled={loading || isProcessing}
             >
               +
             </Button>
@@ -123,6 +131,7 @@ export const ChooseProductForm: React.FC<Props> = ({
           <Button
             className="h-[55px] px-10 text-base rounded-[18px] w-full"
             onClick={handleAdd}
+            disabled={loading || isProcessing}
           >
             Добавить в корзину за {totalPrice} ₽
           </Button>
