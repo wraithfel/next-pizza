@@ -17,6 +17,8 @@ import Link from 'next/link';
 import { CartDrawerItem } from './cart-drawer-item';
 import { getCartItemDetails } from '@/shared/lib';
 import { Ingredient } from '@prisma/client';
+import { useCartStore } from '@/shared/store';
+import { PizzaSize, PizzaType } from '@/shared/constants/pizza';
 
 
 interface Props {
@@ -43,6 +45,12 @@ const items: Ingredient[] = [
 ];
 
 export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children, className }) => {
+    const [totalAmount, fetchCartItems, items] = useCartStore(state => [state.totalAmount, state.fetchCartItems, state.items]);
+
+    React.useEffect(() => {
+        fetchCartItems();
+    }, []);
+
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -56,84 +64,18 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                 </SheetHeader>
 
             <div className='overflow-auto flex-1'>
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
-
-
-            <CartDrawerItem
-                    id={1}
-                    imageUrl="https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif"
-                    details={getCartItemDetails(items, 1, 30)}
-                    name={'Пепперони'}
-                    price={450}
-                    quantity={1}
-                    className='mb-3'
-                    />
+                {items.map((item) => (
+                    <CartDrawerItem
+                    key={item.id}
+                    id={item.id}
+                    imageUrl={item.imageUrl}
+                    details={item.pizzaSize && item.pizzaType ? getCartItemDetails(item.pizzaSize as PizzaSize, item.pizzaType as PizzaType, item.ingredients)
+                        : ''
+                    }
+                    name={item.name}
+                    price={item.price}
+                    quantity={item.quantity} />
+                ))}
             </div>
 
 
@@ -144,7 +86,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                                 Итого
                                 <div className='flex-1 border-b border-dashed border-b-neutral-200 relative -top-1 mx-2' />
                             </span>
-                            <span className='font-bold text-lg'>500 ₽</span>
+                            <span className='font-bold text-lg'>{totalAmount} ₽</span>
                         </div>
 
                         <Link href="/cart">
