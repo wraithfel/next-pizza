@@ -38,7 +38,7 @@ export const ProductCard: React.FC<Props> = ({
 
       <div className='p-4 flex flex-col flex-1'>
         <Title text={name} size="sm" className='mb-1 font-bold' />
-
+        {/* TODO : Вшить в product индвидуальный description */}
         <p className='text-sm text-gray-400 flex-1'>
           Цыпленок, моцарелла, сыр чеддер и пармезан, сырный соус, томаты, соус альфредо, чеснок.
         </p>

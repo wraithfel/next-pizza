@@ -6,7 +6,7 @@ const findCartByToken = (token: string) =>
     where: { token },
     include: {
       items: {
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
           productItem: { include: { product: true } },
           ingredients: true,
@@ -26,56 +26,46 @@ const recalcTotal = async (cartId: number) => {
       (i.productItem.price +
         i.ingredients.reduce((a, b) => a + b.price, 0)) *
         i.quantity,
-    0,
+    0
   );
-  await prisma.cart.update({ where: { id: cartId }, data: { totalAmount: total } });
+  await prisma.cart.update({
+    where: { id: cartId },
+    data: { totalAmount: total },
+  });
 };
 
 export async function GET(req: NextRequest) {
-    try {
-        const token = req.cookies.get('cartToken')?.value;
+  try {
+    const token = req.cookies.get("cartToken")?.value;
 
-        if (!token) {
-            return NextResponse.json({totalAmount: 0, items: []})
-        }
-
-        const userCart = await prisma.cart.findFirst({
-            where: {
-                OR: [
-                    {
-                        token,
-                    }
-                ],
-            },
-            include: {
-                items: {
-                    orderBy: {
-                        createdAt: 'desc',
-                    },
-                     include: {
-                    productItem: {
-                        include: {
-                            product: true,
-                        },
-                    },
-                    ingredients: true
-                }
-                },
-            },
-        });
-
-        return NextResponse.json(userCart);
-    } catch (error) {
-        console.log(error);
+    if (!token) {
+      return NextResponse.json({ totalAmount: 0, items: [] });
     }
+
+    const userCart = await prisma.cart.findFirst({
+      where: { token },
+      include: {
+        items: {
+          orderBy: { createdAt: "desc" },
+          include: {
+            productItem: { include: { product: true } },
+            ingredients: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(userCart);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('cartToken')?.value ?? crypto.randomUUID();
-  if (!req.cookies.get('cartToken')) {
-    const res = NextResponse.next();
-    res.cookies.set('cartToken', token, { httpOnly: true, path: '/' });
-  }
+  let token = req.cookies.get("cartToken")?.value;
+  const needSetCookie = !token;
+  if (!token) token = crypto.randomUUID();
+
   const cart =
     (await prisma.cart.findFirst({ where: { token } })) ??
     (await prisma.cart.create({ data: { token } }));
@@ -87,29 +77,40 @@ export async function POST(req: NextRequest) {
       cartId: cart.id,
       productItemId,
       quantity,
-      ingredients: { connect: ingredientIds.map((id: number) => ({ id })) },
+      ingredients: {
+        connect: ingredientIds.map((id: number) => ({ id })),
+      },
     },
   });
 
   await recalcTotal(cart.id);
-  return NextResponse.json(await findCartByToken(token));
+
+  const response = NextResponse.json(await findCartByToken(token));
+  if (needSetCookie) {
+    response.cookies.set("cartToken", token, {
+      httpOnly: true,
+      path: "/",
+    });
+  }
+  return response;
 }
 
 export async function PATCH(req: NextRequest) {
-  const itemId = Number(req.nextUrl.searchParams.get('itemId'));
-  const quantity = Number(req.nextUrl.searchParams.get('quantity'));
+  const itemId = Number(req.nextUrl.searchParams.get("itemId"));
+  const quantity = Number(req.nextUrl.searchParams.get("quantity"));
   const updated = await prisma.cartItem.update({
     where: { id: itemId },
     data: { quantity },
   });
   await recalcTotal(updated.cartId);
-  return NextResponse.json(await findCartByToken(req.cookies.get('cartToken')!.value));
+  const token = req.cookies.get("cartToken")!.value;
+  return NextResponse.json(await findCartByToken(token));
 }
 
-
 export async function DELETE(req: NextRequest) {
-  const itemId = Number(req.nextUrl.searchParams.get('itemId'));
+  const itemId = Number(req.nextUrl.searchParams.get("itemId"));
   const deleted = await prisma.cartItem.delete({ where: { id: itemId } });
   await recalcTotal(deleted.cartId);
-  return NextResponse.json(await findCartByToken(req.cookies.get('cartToken')!.value));
+  const token = req.cookies.get("cartToken")!.value;
+  return NextResponse.json(await findCartByToken(token));
 }
