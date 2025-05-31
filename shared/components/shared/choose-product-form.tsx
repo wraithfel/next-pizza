@@ -6,6 +6,7 @@ import { Title } from './title';
 import { Button } from '../ui';
 import { useCartStore } from '@/shared/store';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   imageUrl: string;
@@ -22,6 +23,8 @@ export const ChooseProductForm: React.FC<Props> = ({
   ingredients,
   className,
 }) => {
+  const router = useRouter();
+
   const productItem = items[0];
   const productItemId = productItem.id;
   const totalPrice = productItem.price;
@@ -43,6 +46,7 @@ export const ChooseProductForm: React.FC<Props> = ({
         ingredientIds: [],
       });
       toast.success('Товар добавлен в корзину');
+      router.back();
     } catch {
       toast.error('Не удалось добавить в корзину');
     }
@@ -69,6 +73,7 @@ export const ChooseProductForm: React.FC<Props> = ({
       } else {
         try {
           await removeItem(cartItem.id);
+          router.back();
         } catch {
           toast.error('Не удалось удалить из корзины');
         }

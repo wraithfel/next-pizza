@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/shared/lib/utils'
 import React from 'react'
 import { ProductImage } from './product-image'
@@ -9,7 +11,8 @@ import { Ingredient, ProductItem } from '@prisma/client'
 import { IngredientCard } from './ingredient-card'
 import { useSet } from 'react-use'
 import { calcTotalPizzaPrice } from '@/shared/lib'
-import { useCartStore } from '@/shared/store'    
+import { useCartStore } from '@/shared/store'
+import { useRouter } from 'next/navigation'    
 
 interface Props {
   imageUrl: string
@@ -24,6 +27,7 @@ interface Props {
 export const ChoosePizzaForm: React.FC<Props> = ({
   name, imageUrl, ingredients, items, onClickAddCart, className, fullWidthIngredients
 }) => {
+  const router = useRouter()
   const [size, setSize] = React.useState<PizzaSize>(20)
   const [type, setType] = React.useState<PizzaType>(1)
   const [selectedIngredients, {toggle: addIngredient}] = useSet(new Set<number>([]))
@@ -45,7 +49,8 @@ export const ChoosePizzaForm: React.FC<Props> = ({
       quantity: 1,
       ingredientIds: Array.from(selectedIngredients),
     })
-    onClickAddCart?.()         
+    onClickAddCart?.()
+    router.back();         
   }
 
 

@@ -6,6 +6,7 @@ import { ChooseProductForm } from '../choose-product-form'
 import { cn } from '@/shared/lib/utils'
 import { ProductWithRelations } from '@/@types/prisma'
 import { ChoosePizzaForm } from '../choose-pizza-form'
+import toast from 'react-hot-toast'
 
 interface Props {
   product: ProductWithRelations
@@ -33,12 +34,17 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
           name={product.name}
           ingredients={product.ingredients} 
           items={product.items}
+          onClickAddCart={() => {
+             toast.success('Добавлено в корзину')
+             router.back()
+           }}
           />
         ): 
         <ChooseProductForm
           imageUrl={product.imageUrl}
           name={product.name}
           ingredients={[]}
+          items={product.items}
         />
       }
       </DialogContent>
