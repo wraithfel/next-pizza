@@ -10,6 +10,7 @@ import {
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/shared/lib/utils';
+import toast from 'react-hot-toast';
 
 interface Props {
   product: ProductWithRelations;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function ProductScreen({ product, className }: Props) {
+    console.log(product)
   const router = useRouter();
   const isPizza = Boolean(product.items[0]?.pizzaType);
 
@@ -37,9 +39,9 @@ export function ProductScreen({ product, className }: Props) {
           ingredients={product.ingredients}
           items={product.items}
           fullWidthIngredients={true}
-          onClickAddCart={() => {
-            /* можно показать toast 'Добавлено!' */
-          }}
+          onClickAddCart={() =>
+             toast.success('Добавлено в корзину') 
+           }
         />
       ) : (
         <ChooseProductForm
@@ -47,9 +49,6 @@ export function ProductScreen({ product, className }: Props) {
           imageUrl={product.imageUrl}
           ingredients={product.ingredients}
           items={product.items}
-          onClickAdd={() => {
-            /* … */
-          }}
         />
       )}
     </Container>

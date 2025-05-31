@@ -1,5 +1,6 @@
 import type { Viewport } from 'next'
 import { Nunito } from 'next/font/google';
+import { Toaster } from 'react-hot-toast'; 
 import './globals.css';
 
 const nunito = Nunito({
@@ -22,6 +23,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={nunito.className}>
         {children}
+        <Toaster                                      
+          position="top-center"
+          toastOptions={{ duration: 2500 }}
+        />
       </body>
     </html>
   );

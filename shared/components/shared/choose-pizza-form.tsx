@@ -9,6 +9,7 @@ import { Ingredient, ProductItem } from '@prisma/client'
 import { IngredientCard } from './ingredient-card'
 import { useSet } from 'react-use'
 import { calcTotalPizzaPrice } from '@/shared/lib'
+import { useCartStore } from '@/shared/store'    
 
 interface Props {
   imageUrl: string
@@ -31,13 +32,20 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 
   const totalPrice = calcTotalPizzaPrice(type, size, items, ingredients, selectedIngredients)
 
-  const handleClickAdd = () => {
-    onClickAddCart?.();
-    console.log({
-      size,
-      type,
-      ingredients: selectedIngredients
+   const addCartItem = useCartStore(s => s.addCartItem)     
+
+  const handleClickAdd = async () => {
+    const productItem = items.find(
+      (it) => it.size === size && it.pizzaType === type
+    )
+    if (!productItem) return                               
+
+    await addCartItem({
+      productItemId: productItem.id,
+      quantity: 1,
+      ingredientIds: Array.from(selectedIngredients),
     })
+    onClickAddCart?.()         
   }
 
 
