@@ -14,7 +14,7 @@ interface Props {
     id: number;
     name: string;
     imageUrl: string;
-    items: { price: number }[];
+    items: { id: number; price: number }[];
   }>;
   className?: string;
   listClassName?: string;
@@ -27,23 +27,21 @@ export const ProductsGroupList: React.FC<Props> = ({
   className,
   listClassName,
 }) => {
-  const sectionRef         = useRef<HTMLDivElement | null>(null);
-  const setActiveCategory  = useCategoryStore(s => s.setActiveId);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const setActiveCategory = useCategoryStore(s => s.setActiveId);
 
-
-  const entry = useIntersection(sectionRef as React.RefObject<HTMLElement>, { threshold: 0.5 });
+  const entry = useIntersection(sectionRef as React.RefObject<HTMLElement>, {
+    threshold: 0.5,
+  });
 
   useEffect(() => {
     if (!entry?.isIntersecting) return;
-
     setActiveCategory(categoryId);
 
-    const qs   = window.location.search;       
+    const qs = window.location.search;
     const hash = `#${encodeURIComponent(title)}`;
-
     if (window.location.hash === hash) return;
-
-    history.replaceState(null, '', `${qs}${hash}`); 
+    history.replaceState(null, '', `${qs}${hash}`);
   }, [entry?.isIntersecting, categoryId, title, setActiveCategory]);
 
   return (
@@ -56,16 +54,22 @@ export const ProductsGroupList: React.FC<Props> = ({
           listClassName,
         )}
       >
-        {items.map(product => (
-          <ProductCard
-            key={product.id}
-            id={product.id}
-            name={product.name}
-            imageUrl={product.imageUrl}
-            price={product.items[0].price}
-          />
-        ))}
+        {items.map(product => {
+          const firstVariant = product.items[0];
+
+          return (
+            <ProductCard
+              key={product.id}
+              id={product.id}
+              name={product.name}
+              imageUrl={product.imageUrl}
+              price={firstVariant.price}
+              productItemId={firstVariant.id}
+            />
+          );
+        })}
       </div>
     </div>
   );
 };
+

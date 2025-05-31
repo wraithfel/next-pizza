@@ -18,14 +18,13 @@ interface Props {
 }
 
 export function ProductScreen({ product, className }: Props) {
-    console.log(product)
   const router = useRouter();
   const isPizza = Boolean(product.items[0]?.pizzaType);
 
   return (
     <Container className={cn('bg-white rounded-2xl p-8 shadow-lg', className)}>
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push('/')}
         className="mb-6 inline-flex items-center gap-2 text-primary hover:underline"
       >
         <ChevronLeft size={20} />
