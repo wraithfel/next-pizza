@@ -2,10 +2,10 @@ import { mapPizzaType, PizzaSize, PizzaType } from "../constants/pizza";
 import { CartStateItem } from "./get-cart-details";
 
 export const getCartItemDetails = (
+  pizzaSize: PizzaSize | undefined,
+  pizzaType: PizzaType | undefined,
   ingredients: CartStateItem['ingredients'],
-  pizzaType?: PizzaType,
-  pizzaSize?: PizzaSize,
-): string => {
+ ): string => {
   const details = [];
 
   if (pizzaSize && pizzaType) {

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 
@@ -16,7 +16,6 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { CartDrawerItem } from './cart-drawer-item';
 import { getCartItemDetails } from '@/shared/lib';
-import { Ingredient } from '@prisma/client';
 import { useCartStore } from '@/shared/store';
 import { PizzaSize, PizzaType } from '@/shared/constants/pizza';
 
@@ -25,31 +24,14 @@ interface Props {
     className ?: string;
 }
 
-const items: Ingredient[] = [
-  {
-    id: 1,
-    name: 'Сырный бортик',
-    price: 179,
-    imageUrl: 'https://cdn.dodostatic.net/static/Img/Ingredients/99f5cb91225b4875bd06a26d2e842106.png',
-    createdAt: new Date('2025-05-30T12:00:00Z'),
-    updatedAt: new Date('2025-05-30T12:00:00Z'),
-  },
-  {
-    id: 2,
-    name: 'Сливочная моцарелла',
-    price: 79,
-    imageUrl: 'https://cdn.dodostatic.net/static/Img/Ingredients/cdea869ef287426386ed634e6099a5ba.png',
-    createdAt: new Date('2025-05-30T12:05:00Z'),
-    updatedAt: new Date('2025-05-30T12:05:00Z'),
-  },
-];
-
 export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children, className }) => {
-    const [totalAmount, fetchCartItems, items] = useCartStore(state => [state.totalAmount, state.fetchCartItems, state.items]);
+    const totalAmount   = useCartStore(state => state.totalAmount);
+    const fetchCartItems = useCartStore(state => state.fetchCartItems);
+    const items         = useCartStore(state => state.items);
 
     React.useEffect(() => {
         fetchCartItems();
-    }, []);
+    }, [fetchCartItems]);
 
     return (
         <Sheet>
@@ -59,7 +41,18 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
             <SheetContent className='flex flex-col justify-between pb-0 bg-[#F4F1EE]'>
                 <SheetHeader>
                     <SheetTitle>
-                        В корзине <span className='font-bold'>3 товара</span>
+                       В корзине{' '}
+                    <span className="font-bold">
+                    {items.length}{' '}
+                    {(() => {
+                        const n = items.length % 100;
+                        if (n >= 11 && n <= 14) return 'товаров';            //
+                        const lastDigit = items.length % 10;
+                        if (lastDigit === 1) return 'товар';                  
+                        if (lastDigit >= 2 && lastDigit <= 4) return 'товара';
+                        return 'товаров';                                    
+                    })()}
+                    </span>
                     </SheetTitle>
                 </SheetHeader>
 
@@ -69,9 +62,11 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                     key={item.id}
                     id={item.id}
                     imageUrl={item.imageUrl}
-                    details={item.pizzaSize && item.pizzaType ? getCartItemDetails(item.pizzaSize as PizzaSize, item.pizzaType as PizzaType, item.ingredients)
-                        : ''
-                    }
+                    details={
+                        item.pizzaSize && item.pizzaType
+                            ? getCartItemDetails(item.pizzaSize as PizzaSize, item.pizzaType as PizzaType, item.ingredients)
+                            : ''
+                        }
                     name={item.name}
                     price={item.price}
                     quantity={item.quantity} />

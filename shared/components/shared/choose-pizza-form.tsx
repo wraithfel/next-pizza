@@ -17,10 +17,11 @@ interface Props {
   items: ProductItem[]
   onClickAddCart?: VoidFunction
   className?: string
+  fullWidthIngredients?: boolean
 }
 
 export const ChoosePizzaForm: React.FC<Props> = ({
-  name, imageUrl, ingredients, items, onClickAddCart, className,
+  name, imageUrl, ingredients, items, onClickAddCart, className, fullWidthIngredients
 }) => {
   const [size, setSize] = React.useState<PizzaSize>(20)
   const [type, setType] = React.useState<PizzaType>(1)
@@ -65,7 +66,11 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           />
         </div>
 
-        <div className="w-[400px] bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto scrollbar">
+        <div className={cn(
+            fullWidthIngredients ? 'w-full' : 'w-[400px]',
+            'bg-gray-50 p-4 rounded-lg mb-4 overflow-x-auto scrollbar'
+          )}
+        >
           <div className="grid grid-flow-col auto-cols-[7rem] grid-rows-2 gap-3 w-max min-w-full">
             {ingredients.map(ing => (
               <IngredientCard

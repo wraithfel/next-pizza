@@ -12,11 +12,6 @@ export type CartStateItem = {
     ingredients: Array<{ name: string; price: number }>;
 };
 
-interface ReturnProps {
-    items: CartStateItem;
-    totalAmount: number;
-}
-
 export const getCartDetails = (data: CartDTO) => {
     const items = data.items.map((item) => ({
         id: item.id,
