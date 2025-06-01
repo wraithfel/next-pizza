@@ -1,14 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from '@/prisma/prisma-client'
 import { notFound } from 'next/navigation'
 import { ProductScreen } from '@/shared/components/shared'
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function ProductPage({ params }: any) {
   const product = await prisma.product.findFirst({
-    where: { id: Number(params.id) },
+    where: { id: Number(params?.id) },
     include: {
       items: true,
       ingredients: true,

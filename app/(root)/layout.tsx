@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { Viewport } from 'next'
 import { Header } from '@/shared/components/shared'
 import InitAuth from '@/shared/components/shared/init-auth';
+import { Suspense } from 'react';
 
 
 export const viewport: Viewport = {
@@ -23,7 +24,9 @@ export default function HomeLayout({
 }>) {
   return (
         <main className="min-h-screen">
-          <Header/>
+          <Suspense>
+            <Header/>
+          </Suspense>
           <InitAuth />
           {children}
           {modal}
