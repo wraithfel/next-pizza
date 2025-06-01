@@ -15,38 +15,41 @@ interface Props {
 
 export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
   const router = useRouter()
-  const isPizzaForm = Boolean(product.items[0].pizzaType);
+  const isPizzaForm = Boolean(product.items[0]?.pizzaType)
 
   if (!product) return null
 
   return (
     <Dialog open onOpenChange={() => router.back()}>
-        <DialogContent
-          className={cn(
-            'w-full sm:w-[90vw] max-w-[1060px]',
-            'max-h-[90vh]',
-            'p-6 sm:p-8 rounded-2xl overflow-hidden',
-            className,
-          )}>
+      <DialogContent
+        className={cn(
+          'w-full sm:w-[90vw] max-w-[1060px]',
+          'max-h-[90vh]',
+          'p-6 sm:p-8 rounded-2xl overflow-hidden',
+          className
+        )}
+      >
         <DialogTitle className="sr-only">{product.name}</DialogTitle>
         {isPizzaForm ? (
-          <ChoosePizzaForm imageUrl={product.imageUrl}
-          name={product.name}
-          ingredients={product.ingredients} 
-          items={product.items}
-          onClickAddCart={() => {
-             toast.success('Добавлено в корзину')
-             router.back()
-           }}
+          <ChoosePizzaForm
+            imageUrl={product.imageUrl}
+            name={product.name}
+            ingredients={product.ingredients}
+            items={product.items}
+            onClickAddCart={() => {
+              toast.success('Добавлено в корзину')
+              router.back()
+            }}
           />
-        ): 
-        <ChooseProductForm
-          imageUrl={product.imageUrl}
-          name={product.name}
-          ingredients={[]}
-          items={product.items}
-        />
-      }
+        ) : (
+          <ChooseProductForm
+            imageUrl={product.imageUrl}
+            name={product.name}
+            description={product.description}
+            ingredients={[]}
+            items={product.items}
+          />
+        )}
       </DialogContent>
     </Dialog>
   )

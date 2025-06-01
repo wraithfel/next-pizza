@@ -6,7 +6,6 @@ import { cn } from '@/shared/lib/utils';
 import { Title } from './title';
 import { ProductCard } from './product-card';
 import { useCategoryStore } from '@/shared/store/category';
-import { getProductCardText } from '@/shared/lib';
 
 interface Props {
   categoryId: number;
@@ -16,8 +15,9 @@ interface Props {
     name: string;
     description: string | null;
     imageUrl: string;
-    items: { id: number; price: number }[];
-  }>;
+    ingredients?: { name: string }[];
+    items: { id: number; price: number; pizzaType?: number | null }[];
+  }>
   className?: string;
   listClassName?: string;
 }
@@ -57,8 +57,16 @@ export const ProductsGroupList: React.FC<Props> = ({
         )}
       >
         {items.map(product => {
-          const subtitle = getProductCardText(product);
           const firstVariant = product.items[0];
+          const isPizza = Boolean(firstVariant.pizzaType);
+          let details = '';
+
+          if (isPizza && product.ingredients) {
+            const line = product.ingredients.map((i) => i.name).join(', ');
+            details = line.length > 80 ? line.slice(0, 77) + '…' : line;
+          } else {
+            details = product.description ?? '';
+          }
 
           return (
             <ProductCard
@@ -68,6 +76,7 @@ export const ProductsGroupList: React.FC<Props> = ({
               imageUrl={product.imageUrl}
               price={firstVariant.price}
               productItemId={firstVariant.id}
+              details={details}
             />
           );
         })}

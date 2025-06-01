@@ -39,13 +39,14 @@ export function ProductScreen({ product, className }: Props) {
           items={product.items}
           fullWidthIngredients={true}
           onClickAddCart={() =>
-             toast.success('Добавлено в корзину') 
-           }
+            toast.success('Добавлено в корзину')
+          }
         />
       ) : (
         <ChooseProductForm
           name={product.name}
           imageUrl={product.imageUrl}
+          description={product.description}
           ingredients={product.ingredients}
           items={product.items}
         />

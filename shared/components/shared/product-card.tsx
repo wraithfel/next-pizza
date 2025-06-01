@@ -17,6 +17,7 @@ interface Props {
   imageUrl?: string;
   productItemId: number;
   className?: string;
+  details?: string;
 }
 
 export const ProductCard: React.FC<Props> = ({
@@ -26,6 +27,7 @@ export const ProductCard: React.FC<Props> = ({
   imageUrl,
   productItemId,
   className,
+  details
 }) => {
   const cartItem = useCartStore((s) =>
     s.items.find((it) => it.productItemId === productItemId)
@@ -90,10 +92,9 @@ export const ProductCard: React.FC<Props> = ({
 
       <div className="p-4 flex flex-col flex-1">
         <Title text={name} size="sm" className="mb-1 font-bold" />
-        <p className="text-sm text-gray-400 flex-1">
-          {/* Описание можно заменить динамически при необходимости */}
-          Цыплёнок, сыры чеддер и пармезан, соус альфредо, томаты.
-        </p>
+         {details && (
+          <p className="text-sm text-gray-400 flex-1">{details}</p>
+        )}
 
         <div className="mt-4 flex items-center justify-between">
           <span className="text-[20px]">

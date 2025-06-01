@@ -13,6 +13,7 @@ interface Props {
   name: string;
   items: Array<{ id: number; price: number }>;
   ingredients: any[];
+  description?: string | null;
   className?: string;
 }
 
@@ -21,6 +22,7 @@ export const ChooseProductForm: React.FC<Props> = ({
   imageUrl,
   items,
   ingredients,
+  description,
   className,
 }) => {
   const router = useRouter();
@@ -105,6 +107,9 @@ export const ChooseProductForm: React.FC<Props> = ({
       >
         <div>
           <Title text={name} size="md" className="font-extrabold mb-3" />
+          {description && (
+            <p className="text-lg text-gray-500 mb-4">{description}</p>
+          )}
         </div>
         {quantity > 0 ? (
           <div className="flex items-center gap-4">
