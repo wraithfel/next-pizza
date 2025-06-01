@@ -1,42 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Container } from '@/shared/components/shared';
-import { Button, Input } from '@/shared/components/ui';
-import { AuthDialog } from '@/shared/components/shared/auth-dialog';
+import { Input, Button } from '@/shared/components/ui';
 import { useAuthStore } from '@/shared/store/auth';
 import { useCartStore } from '@/shared/store';
 import { Api } from '@/shared/services/api-client';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { AuthWarningDialog } from '@/shared/components/shared/auth-warning-dialog';
 
 export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuthStore();
-  const cartStore   = useCartStore();
-  const router      = useRouter();
-
-  const [openDialog, setOpenDialog] = useState(false);
-
-  useEffect(() => {
-    cartStore.fetchCartItems();
-  }, [cartStore]);
+  const router = useRouter();
+  const cartStore = useCartStore();
+  const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
-      setOpenDialog(true);
+      setShowWarning(true);
     }
   }, [authLoading, user]);
 
-  if (authLoading) return null;
-
-  if (!user) {
-    return <AuthDialog open={openDialog} onOpenChange={setOpenDialog} />;
-  }
-
   const [form, setForm] = useState({
-    fullName: user.fullName,
-    phone:    '',
-    address:  '',
-    comment:  '',
+    fullName: user?.fullName ?? '',
+    phone: '',
+    address: '',
+    comment: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -45,16 +35,22 @@ export default function CheckoutPage() {
       setSaving(true);
       await Api.orders.create(form);
       await cartStore.fetchCartItems();
+      toast.success('Заказ оформлен!');
       router.push('/order-success');
+    } catch (e: any) {
+      toast.error(e.response?.data?.message ?? 'Ошибка оформления');
     } finally {
       setSaving(false);
     }
   };
 
+  if (showWarning) {
+    return <AuthWarningDialog open={showWarning} onOpenChange={setShowWarning} />;
+  }
+
   return (
     <Container className="py-10">
       <h1 className="text-2xl font-bold mb-6">Доставка</h1>
-
       <div className="max-w-md flex flex-col gap-4">
         <Input
           placeholder="Ваше имя"
@@ -72,12 +68,12 @@ export default function CheckoutPage() {
           onChange={e => setForm({ ...form, address: e.target.value })}
         />
         <Input
-          placeholder="Комментарий (необязательно)"
+          placeholder="Комментарий к заказу (необязательно)"
           value={form.comment}
           onChange={e => setForm({ ...form, comment: e.target.value })}
         />
 
-        <Button disabled={saving} onClick={onSubmit}>
+        <Button onClick={onSubmit} disabled={saving}>
           Подтвердить заказ
         </Button>
       </div>

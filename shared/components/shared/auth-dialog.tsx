@@ -14,7 +14,9 @@ interface Props {
 export const AuthDialog: React.FC<Props> = ({ open, onOpenChange }) => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [form, setForm] = useState({ fullName: '', email: '', password: '' });
-  const { signIn, signUp, loading } = useAuthStore();
+  const signIn = useAuthStore((state) => state.signIn);
+  const signUp = useAuthStore((state) => state.signUp);
+  const loading = useAuthStore((state) => state.loading);
 
   const submit = async () => {
     try {

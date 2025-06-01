@@ -17,5 +17,6 @@ export { CartButton } from './cart-button';
 export { CartDrawer } from './cart-drawer';
 export { CountButton } from './count-button';
 export { ProductScreen } from './product-screen';
-export { CartDrawerItem } from './cart-drawer-item'
+export { CartDrawerItem } from './cart-drawer-item';
+export { AuthWarningDialog } from './auth-warning-dialog'
 

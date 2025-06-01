@@ -16,20 +16,32 @@ export async function POST(req: NextRequest) {
   let cart;
 
   if (existingCartToken) {
-
     const anonCart = await prisma.cart.findFirst({
       where: { token: existingCartToken },
     });
 
     if (anonCart && !anonCart.userId) {
-      cart = await prisma.cart.update({
-        where: { id: anonCart.id },
-        data: { userId: user.id },
+
+      const userCart = await prisma.cart.findFirst({
+        where: { userId: user.id },
       });
+
+      if (userCart) {
+
+        cart = userCart;
+        await prisma.cart.delete({ where: { id: anonCart.id } });
+      } else {
+
+        cart = await prisma.cart.update({
+          where: { id: anonCart.id },
+          data: { userId: user.id },
+        });
+      }
     }
   }
 
   if (!cart) {
+
     const userCart = await prisma.cart.findFirst({
       where: { userId: user.id },
     });
@@ -48,14 +60,13 @@ export async function POST(req: NextRequest) {
   }
 
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '30d' });
-
   const res = NextResponse.json(user);
+
   res.cookies.set('token', token, {
     httpOnly: true,
     path: '/',
-    maxAge: 2_592_000, 
+    maxAge: 2_592_000,
   });
-
   res.cookies.set('cartToken', cart.token, {
     httpOnly: true,
     path: '/',
