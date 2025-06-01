@@ -121,17 +121,38 @@ async function up() {
 
 
    await prisma.productItem.createMany({
-        data: baseProducts.map(({ id, categoryId }) => ({
-        productId: id,
-        // завтрак — 200, закуски — 150, коктейли — 180, напитки — 120
-        price:
-            categoryId === 2 ? 200 :
-            categoryId === 3 ? 150 :
-            categoryId === 4 ? 180 :
-            categoryId === 5 ? 120 :
-            100,
-        })),
-    });
+  data: baseProducts.map(({ id, categoryId }) => {
+    
+    let minPrice = 100;
+    let maxPrice = 500;
+
+    if (categoryId === 2) {
+
+      minPrice = 150;
+      maxPrice = 300;
+    } else if (categoryId === 3) {
+
+      minPrice = 100;
+      maxPrice = 250;
+    } else if (categoryId === 4) {
+
+      minPrice = 120;
+      maxPrice = 280;
+    } else if (categoryId === 5) {
+
+      minPrice =  80;
+      maxPrice = 200;
+    }
+
+    const randomPrice =
+      Math.floor(Math.random() * (maxPrice - minPrice + 1)) + minPrice;
+
+    return {
+      productId: id,
+      price: randomPrice,
+    };
+  }),
+});
 
 
   await prisma.productItem.createMany({
