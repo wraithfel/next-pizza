@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import type { Viewport } from 'next'
 import { Header } from '@/shared/components/shared'
+import InitAuth from '@/shared/components/shared/init-auth';
+
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -22,6 +24,7 @@ export default function HomeLayout({
   return (
         <main className="min-h-screen">
           <Header/>
+          <InitAuth />
           {children}
           {modal}
         </main>
