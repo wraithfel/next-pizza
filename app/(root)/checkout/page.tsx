@@ -1,0 +1,80 @@
+'use client';
+
+import { Container } from '@/shared/components/shared';
+import { Input, Button } from '@/shared/components/ui';
+import { useAuthStore } from '@/shared/store/auth';
+import { useCartStore } from '@/shared/store';
+import { Api } from '@/shared/services/api-client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+
+export default function CheckoutPage() {
+  const { user, loading: authLoading } = useAuthStore();
+  const router = useRouter();
+  const cartStore = useCartStore();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast.error('Сначала войдите в аккаунт');
+      router.push('/');                 
+    }
+  }, [authLoading, user, router]);
+
+  const [form, setForm] = useState({
+    fullName: user?.fullName ?? '',
+    phone: '',
+    address: '',
+    comment: '',
+  });
+  const [saving, setSaving] = useState(false);
+
+  const onSubmit = async () => {
+    try {
+      setSaving(true);
+      await Api.orders.create(form);
+      await cartStore.fetchCartItems();        
+      toast.success('Заказ оформлен!');
+      router.push('/order-success');
+    } catch (e: any) {
+      toast.error(e.response?.data?.message ?? 'Ошибка оформления');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!user) return null;
+
+  return (
+    <Container className="py-10">
+      <h1 className="text-2xl font-bold mb-6">Доставка</h1>
+
+      <div className="max-w-md flex flex-col gap-4">
+        <Input
+          placeholder="Ваше имя"
+          value={form.fullName}
+          onChange={e => setForm({ ...form, fullName: e.target.value })}
+        />
+        <Input
+          placeholder="Телефон"
+          value={form.phone}
+          onChange={e => setForm({ ...form, phone: e.target.value })}
+        />
+        <Input
+          placeholder="Адрес доставки"
+          value={form.address}
+          onChange={e => setForm({ ...form, address: e.target.value })}
+        />
+        <Input
+          placeholder="Комментарий к заказу (необязательно)"
+          value={form.comment}
+          onChange={e => setForm({ ...form, comment: e.target.value })}
+        />
+
+        <Button onClick={onSubmit} disabled={saving}>
+          Подтвердить заказ
+        </Button>
+      </div>
+    </Container>
+  );
+}
