@@ -70,6 +70,43 @@ async function up() {
     },
   });
 
+    const pizza4 = await prisma.product.create({
+    data: {
+      name: 'Креветки со сладким чили',
+      imageUrl:
+        'https://media.dodostatic.net/image/r:1875x1875/0194d4fd39bb7352bfa5de2219e88b9b.avif',
+      categoryId: 1,
+      ingredients: {
+        connect: ingredients.slice(1, 8),
+      },
+    },
+  });
+
+    const pizza5 = await prisma.product.create({
+    data: {
+      name: 'Карбонара',
+      imageUrl:
+        'https://media.dodostatic.net/image/r:1875x1875/019591b13a1a724b90092c16d9b1c05a.avif',
+      categoryId: 1,
+      ingredients: {
+        connect: ingredients.slice(1, 8),
+      },
+    },
+  });
+
+    const pizza6 = await prisma.product.create({
+    data: {
+      name: 'Сырный цыпленок',
+      imageUrl:
+        'https://media.dodostatic.net/image/r:1875x1875/11ee7d610e8bbb248f31270be742b4bd.avif',
+      categoryId: 1,
+      ingredients: {
+        connect: ingredients.slice(1, 8),
+      },
+    },
+  });
+
+
   const allProducts = await prisma.product.findMany({
         select: { id: true, categoryId: true },
   });
@@ -93,32 +130,51 @@ async function up() {
 
 
   await prisma.productItem.createMany({
-    data: [
-        // Пепперони фреш (pizza1)
-        { productId: pizza1.id, size: 20, price: 499, pizzaType: 1 },
-        { productId: pizza1.id, size: 20, price: 499, pizzaType: 2 },
-        { productId: pizza1.id, size: 30, price: 699, pizzaType: 1 },
-        { productId: pizza1.id, size: 30, price: 699, pizzaType: 2 },
-        { productId: pizza1.id, size: 40, price: 899, pizzaType: 1 },
-        { productId: pizza1.id, size: 40, price: 899, pizzaType: 2 },
+  data: [
 
-        // Сырная (pizza2)
-        { productId: pizza2.id, size: 20, price: 450, pizzaType: 1 },
-        { productId: pizza2.id, size: 20, price: 450, pizzaType: 2 },
-        { productId: pizza2.id, size: 30, price: 650, pizzaType: 1 },
-        { productId: pizza2.id, size: 30, price: 650, pizzaType: 2 },
-        { productId: pizza2.id, size: 40, price: 850, pizzaType: 1 },
-        { productId: pizza2.id, size: 40, price: 850, pizzaType: 2 },
+    { productId: pizza1.id, size: 20, price: 499, pizzaType: 1 },
+    { productId: pizza1.id, size: 20, price: 499, pizzaType: 2 },
+    { productId: pizza1.id, size: 30, price: 699, pizzaType: 1 },
+    { productId: pizza1.id, size: 30, price: 699, pizzaType: 2 },
+    { productId: pizza1.id, size: 40, price: 899, pizzaType: 1 },
+    { productId: pizza1.id, size: 40, price: 899, pizzaType: 2 },
 
-        // Чоризо фреш (pizza3)
-        { productId: pizza3.id, size: 20, price: 520, pizzaType: 1 },
-        { productId: pizza3.id, size: 20, price: 520, pizzaType: 2 },
-        { productId: pizza3.id, size: 30, price: 720, pizzaType: 1 },
-        { productId: pizza3.id, size: 30, price: 720, pizzaType: 2 },
-        { productId: pizza3.id, size: 40, price: 920, pizzaType: 1 },
-        { productId: pizza3.id, size: 40, price: 920, pizzaType: 2 },
-    ],
-  });
+    { productId: pizza2.id, size: 20, price: 450, pizzaType: 1 },
+    { productId: pizza2.id, size: 20, price: 450, pizzaType: 2 },
+    { productId: pizza2.id, size: 30, price: 650, pizzaType: 1 },
+    { productId: pizza2.id, size: 30, price: 650, pizzaType: 2 },
+    { productId: pizza2.id, size: 40, price: 850, pizzaType: 1 },
+    { productId: pizza2.id, size: 40, price: 850, pizzaType: 2 },
+
+    { productId: pizza3.id, size: 20, price: 520, pizzaType: 1 },
+    { productId: pizza3.id, size: 20, price: 520, pizzaType: 2 },
+    { productId: pizza3.id, size: 30, price: 720, pizzaType: 1 },
+    { productId: pizza3.id, size: 30, price: 720, pizzaType: 2 },
+    { productId: pizza3.id, size: 40, price: 920, pizzaType: 1 },
+    { productId: pizza3.id, size: 40, price: 920, pizzaType: 2 },
+
+    { productId: pizza4.id, size: 20, price: 480, pizzaType: 1 },
+    { productId: pizza4.id, size: 20, price: 480, pizzaType: 2 },
+    { productId: pizza4.id, size: 30, price: 680, pizzaType: 1 },
+    { productId: pizza4.id, size: 30, price: 680, pizzaType: 2 },
+    { productId: pizza4.id, size: 40, price: 880, pizzaType: 1 },
+    { productId: pizza4.id, size: 40, price: 880, pizzaType: 2 },
+
+    { productId: pizza5.id, size: 20, price: 530, pizzaType: 1 },
+    { productId: pizza5.id, size: 20, price: 530, pizzaType: 2 },
+    { productId: pizza5.id, size: 30, price: 730, pizzaType: 1 },
+    { productId: pizza5.id, size: 30, price: 730, pizzaType: 2 },
+    { productId: pizza5.id, size: 40, price: 930, pizzaType: 1 },
+    { productId: pizza5.id, size: 40, price: 930, pizzaType: 2 },
+
+    { productId: pizza6.id, size: 20, price: 500, pizzaType: 1 },
+    { productId: pizza6.id, size: 20, price: 500, pizzaType: 2 },
+    { productId: pizza6.id, size: 30, price: 700, pizzaType: 1 },
+    { productId: pizza6.id, size: 30, price: 700, pizzaType: 2 },
+    { productId: pizza6.id, size: 40, price: 900, pizzaType: 1 },
+    { productId: pizza6.id, size: 40, price: 900, pizzaType: 2 },
+  ],
+});
 
   await prisma.cart.createMany({
     data: [

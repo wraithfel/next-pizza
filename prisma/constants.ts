@@ -129,6 +129,21 @@ export const products = [
     categoryId: 2,
   },
   {
+    name: 'Омлет с томатами в пите',
+    imageUrl: 'https://media.dodostatic.net/image/r:1875x1875/0197031381be73b0a8253112df142148.avif',
+    categoryId: 2,
+  },
+  {
+    name: 'Омлет с ветчиной и грибами в пите',
+    imageUrl: 'https://media.dodostatic.net/image/r:1875x1875/019702ef9a7371f795eaaa1372844e13.avif',
+    categoryId: 2,
+  },
+  {
+    name: 'Омлет сырный в пите',
+    imageUrl: 'https://media.dodostatic.net/image/r:1875x1875/0197030bdc7e700ab6f0a869787cc9f9.avif',
+    categoryId: 2,
+  },
+  {
     name: 'Дэнвич ветчина и сыр',
     imageUrl: 'https://media.dodostatic.net/image/r:1875x1875/01960b7c2e3871fabedd3f13bd270d6e.avif',
     categoryId: 3,
