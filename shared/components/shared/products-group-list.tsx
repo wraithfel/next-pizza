@@ -6,6 +6,7 @@ import { cn } from '@/shared/lib/utils';
 import { Title } from './title';
 import { ProductCard } from './product-card';
 import { useCategoryStore } from '@/shared/store/category';
+import { getProductCardText } from '@/shared/lib';
 
 interface Props {
   categoryId: number;
@@ -13,6 +14,7 @@ interface Props {
   items: Array<{
     id: number;
     name: string;
+    description: string | null;
     imageUrl: string;
     items: { id: number; price: number }[];
   }>;
@@ -55,6 +57,7 @@ export const ProductsGroupList: React.FC<Props> = ({
         )}
       >
         {items.map(product => {
+          const subtitle = getProductCardText(product);
           const firstVariant = product.items[0];
 
           return (

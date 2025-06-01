@@ -40,6 +40,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:584x584/11ee7d612fc7b7fca5be822752bee1e5.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(0, 9),
       },
@@ -52,6 +53,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:584x584/11ee7d610d2925109ab2e1c92cc5383c.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(3, 9),
       },
@@ -64,6 +66,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:584x584/11ee7d61706d472f9a5d71eb94149304.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(1, 8),
       },
@@ -76,6 +79,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:1875x1875/0194d4fd39bb7352bfa5de2219e88b9b.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(1, 8),
       },
@@ -88,6 +92,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:1875x1875/019591b13a1a724b90092c16d9b1c05a.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(1, 8),
       },
@@ -100,6 +105,7 @@ async function up() {
       imageUrl:
         'https://media.dodostatic.net/image/r:1875x1875/11ee7d610e8bbb248f31270be742b4bd.avif',
       categoryId: 1,
+      description: null,
       ingredients: {
         connect: ingredients.slice(1, 8),
       },
@@ -111,9 +117,8 @@ async function up() {
         select: { id: true, categoryId: true },
   });
 
-  const baseProducts = allProducts.filter(p => 
-        p.id !== pizza1.id && p.id !== pizza2.id && p.id !== pizza3.id
-  );
+  const baseProducts = allProducts.filter(p => p.categoryId !== 1);
+
 
    await prisma.productItem.createMany({
         data: baseProducts.map(({ id, categoryId }) => ({
