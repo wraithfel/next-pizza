@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     include: { ingredients: true },
   });
 
-  let existing = existingItems.find(item => {
+  const existing = existingItems.find(item => {
     const existingIds = item.ingredients.map(ing => ing.id).sort();
     const newIds = ingredientIds.slice().sort();
     return JSON.stringify(existingIds) === JSON.stringify(newIds);

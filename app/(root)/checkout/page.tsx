@@ -37,8 +37,18 @@ export default function CheckoutPage() {
       await cartStore.fetchCartItems();
       toast.success('Заказ оформлен!');
       router.push('/order-success');
-    } catch (e: any) {
-      toast.error(e.response?.data?.message ?? 'Ошибка оформления');
+    } catch (error) {
+      let message = 'Ошибка оформления';
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as { response?: { data?: { message?: unknown } } }).response?.data?.message ===
+          'string'
+      ) {
+        message = (error as { response: { data: { message: string } } }).response.data.message;
+      }
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -72,7 +82,6 @@ export default function CheckoutPage() {
           value={form.comment}
           onChange={e => setForm({ ...form, comment: e.target.value })}
         />
-
         <Button onClick={onSubmit} disabled={saving}>
           Подтвердить заказ
         </Button>
