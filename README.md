@@ -1,36 +1,312 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Next Pizza** — это интернет-магазин пиццы, реализованный на стеке:
 
-## Getting Started
+* **Next.js (App Router)** – серверный рендеринг, маршрутизация, интеграция с React.
+* **Prisma** – ORM для работы с PostgreSQL.
+* **Tailwind CSS + shadcn/ui + Radix UI** – стильный и адаптивный интерфейс без лишнего CSS-барахла.
+* **Zustand** – легковесный стейт-менеджмент для клиентской части.
+* **TypeScript** – строгая типизация на всех уровнях.
 
-First, run the development server:
+В проекте предусмотрено:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+* Список категорий (пицца, закуски, напитки и т. д.) с фильтрацией по цене, размеру, типу теста и ингредиентам.
+* Динамические страницы продуктов (как отдельные пиццы с выбором размера и доп. ингредиентов, так и прочие товары).
+* Корзина, которая хранится в сессии (анонимный токен + привязка к пользователю при авторизации).
+* Регистрация/авторизация пользователей (JWT-куки), сохранение состояния корзины при входе.
+* Оформление заказа: проверка авторизации, сбор деталей корзины, создание заказа в базе данных.
+* Админ-секция (минимально) через роль ADMIN (можно расширять по необходи­мости).
+* API-роуты **Next API** для всех сущностей: `/api/auth/*`, `/api/cart`, `/api/categories`, `/api/ingredients`, `/api/products/search`, `/api/orders` и т. д.
+
+Приложение уже готово к быстрому деплою на Vercel (или другой платформе, поддерживающей Next.js).
+
+---
+
+## Оглавление
+
+1. [Функциональность](#функциональность)
+2. [Технологии](#технологии)
+3. [Установка и локальный запуск](#установка-и-локальный-запуск)
+4. [Переменные окружения](#переменные-окружения)
+5. [Работа с базой данных (Prisma)](#работа-с-базой-данных-prisma)
+6. [Сборка и деплой](#сборка-и-деплой)
+7. [Структура проекта](#структура-проекта)
+
+---
+
+## Функциональность
+
+* **Главная страница**:
+
+  * Вывод всех категорий товаров («Пицца», «Закуски», «Коктейли», «Напитки» и т. д.).
+  * Фильтрация по размеру, типу теста, диапазону цены и дополнительным ингредиентам (для пицц).
+  * Сортировка списка по популярности, цене (возр./убыв.), алфавиту.
+  * Плавный скролл по разделам с выделением активной категории и обновлением хеша в URL (`#НазваниеКатегории`).
+
+* **Страница продукта**:
+
+  * **Пицца**: выбор размера (20, 30, 40 см), типа теста (традиционное/тонкое), доп. ингредиенты (сырный бортик, моцарелла, грибы и т. д.).
+  * **Не-пицца (продукты из других категорий)**: один фиксированный товар с цена­ми и описанием, возможность быстро добавить в корзину.
+  * Взаимодействие с корзиной: увеличить/уменьшить количество, удалить элемент.
+
+* **Корзина**:
+
+  * Анонимная корзина хранится в cookie (`cartToken`).
+  * При авторизации корзина сливается с существующей корзиной пользователя (если она есть).
+  * Возможность изменить количество или удалить товар прямо из Drawer-компонента.
+  * Кнопка «Оформить заказ» перенаправляет на страницу `/checkout`.
+
+* **Регистрация/Авторизация**:
+
+  * **API**: `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me`.
+  * Хранение JWT в HTTP-only cookie `token` (срок действия 30 дней).
+  * Анонимная корзина при входе связывается с пользователем.
+
+* **Оформление заказа**:
+
+  * Форма с полями «Имя», «Телефон», «Адрес», «Комментарий».
+  * Если пользователь не авторизован — показывается диалог с предупреждением (AuthWarningDialog).
+  * При успешной отправке заказа: очистка корзины, редирект на страницу благодарности `/order-success`.
+
+* **Админ-права (минимально)**:
+
+  * В коде уже учтены поля `role: USER | ADMIN` и API для работы с пользователями/заказами.
+  * Логика интерфейса админа (CRUD для товаров/категорий) можно добавить по необходи­мости.
+
+---
+
+## Технологии
+
+* **Next.js 15 (App Router)**
+* **React 19 + TypeScript**
+* **Prisma 6** (ORM для PostgreSQL)
+* **Tailwind CSS 4**, **tailwind-merge**, **clsx**
+* **shadcn/ui** + **Radix Primitives** (dialog, popover, slider, sheet и т. д.)
+* **Lucide + class-variance-authority (cva)** для иконок и вариантов компонентов
+* **Zustand** — управление стейтом (корзина, авторизация, активная категория)
+* **React Use** — хуки `useSet`, `useIntersection`, `useDebounce`, `useClickAway`
+* **Axios** — HTTP-клиент
+* **bcrypt**, **jsonwebtoken** — шифрование паролей, генерация JWT
+* **PostgreSQL** (через Prisma)
+* **Node 18 + pnpm/npm/yarn** (любой пакетный менеджер)
+
+---
+
+## Установка и локальный запуск
+
+> Инструкция предполагает, что у вас уже установлены **Node.js >=18**, **pnpm или npm**, а также настроен доступ к PostgreSQL.
+
+1. Клонируйте репозиторий:
+
+   ```bash
+   git clone https://github.com/<ваш-логин>/next-pizza.git
+   cd next-pizza
+   ```
+
+2. Установите зависимости:
+
+   ```bash
+   # npm:
+   npm install
+
+   # или yarn:
+   yarn
+
+   # или pnpm:
+   pnpm install
+   ```
+
+3. Скопируйте файл с переменными окружения:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Откройте `.env` и заполните нужные параметры (см. раздел «Переменные окружения»).
+
+4. Убедитесь, что ваша база данных PostgreSQL доступна и переменная `DATABASE_URL` указана правильно.
+
+5. Запустите миграции и сеединг:
+
+   ```bash
+   npx prisma generate
+   npx prisma db push        # создаст схему в базе (без миграций)
+   npx prisma migrate dev     # (при необходимости) запустит миграции и создаст БД
+   npx prisma db seed         # заполнит таблицы начальными категориями, продуктами, пользователями и корзинами
+   ```
+
+   > Если вы предпочитаете миграции вручную:
+   >
+   > ```bash
+   > npx prisma migrate deploy
+   > npx prisma db seed
+   > ```
+
+6. Запустите сервер разработки:
+
+   ```bash
+   npm run dev
+   # или
+   yarn dev
+   # или
+   pnpm dev
+   ```
+
+7. Откройте в браузере [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Переменные окружения
+
+Файл `.env` (пример `.env.example`) должен содержать:
+
+```dotenv
+# URL подключения к PostgreSQL (Postgres)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+
+# Базовый URL для Axios (когда фронтенд обращается к API локально)
+NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+
+# Секрет для генерации JWT (любой случайный строковый ключ)
+JWT_SECRET="ваш_секрет_для_jwt_формата"
+
+# (Дополнительно) Port, если хотите задать не 3000
+# PORT=3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* `DATABASE_URL` — строка подключения к вашей БД PostgreSQL.
+* `NEXT_PUBLIC_API_URL` — адрес вашего API (для веб-клиента, используется `withCredentials`).
+* `JWT_SECRET` — секретный ключ для подписи JWT в API-роутах `auth`.
+* При необходимости добавьте другие env-переменные (например, для SendGrid, Sentry и т. д.).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Работа с базой данных (Prisma)
 
-## Learn More
+1. **Генерация клиента Prisma**
+   После установки зависимостей (`prisma` в `devDependencies` и `@prisma/client` в `dependencies`) выполните:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npx prisma generate
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   Это сгенерирует типизированный клиент `prisma` в проекте.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Миграции**
 
-## Deploy on Vercel
+   * Чтобы создать новую миграцию при изменении `schema.prisma`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+     ```bash
+     npx prisma migrate dev --name <имя_миграции>
+     ```
+   * Чтобы применить все миграции на продакшене/CI:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+     ```bash
+     npx prisma migrate deploy
+     ```
+
+3. **Seed (заполнение данными по умолчанию)**
+   В файле `prisma/seed.ts` описано:
+
+   * Создание двух пользователей: `user@test.ru:111111` (USER) и `admin@test.ru:111111` (ADMIN).
+   * Категории товаров и ингредиенты с ценами и картинками.
+   * Несколько “базовых” товаров (омлеты, напитки, прочее) + шесть готовых пицц с вариантами размеров/типа теста.
+   * Создание двух корзин для тестовых пользователей с параметрами `cartToken = '11111'` и `'22222'`.
+
+   Запустить seed:
+
+   ```bash
+   npx prisma db seed
+   ```
+
+4. **Prisma Studio**
+   Чтобы просмотреть данные через GUI:
+
+   ```bash
+   npx prisma studio
+   ```
+
+---
+
+## Сборка и деплой
+
+* Для продакшен-сборки:
+
+  ```bash
+  npm run build
+  ```
+
+  После успешной сборки появится папка `.next`, готовая к деплою.
+
+* **Запуск продакшен-сервера локально:**
+
+  ```bash
+  npm run start
+  ```
+
+  по умолчанию – `NODE_ENV=production`, порт 3000 (или указанный в env).
+
+* **Деплой на Vercel**
+
+  1. Подключите репозиторий в Vercel.
+  2. В настройках проекта укажите переменные окружения (`DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
+  3. По умолчанию Vercel настроит сборку:
+
+     ```
+     npm install
+     npm run build
+     npm run start
+     ```
+  4. Vercel автоматически запустит миграции, если настроить `postinstall` скрипт (у нас в `package.json` стоит `"postinstall": "prisma generate"`).
+  5. Не забудьте подключить PostgreSQL (Heroku, DigitalOcean, Railway или аналог).
+
+---
+
+## Структура проекта
+
+```
+next-pizza/
+├── app/
+│   ├── api/                   # Next API Routes
+│   │   ├── auth/ ...          # логика регистрации/входа/выхода/me
+│   │   ├── cart/ ...          # чтение/добавление/обновление/удаление элементов корзины
+│   │   ├── categories/ ...    # получение списка категорий
+│   │   ├── ingredients/ ...   # получение списка ингредиентов
+│   │   ├── orders/ ...        # создание заказов
+│   │   ├── products/search/   # поиск продуктов по имени
+│   │   └── users/ ...         # (опционально) CRUD пользователей
+│   ├── (root)/                # базовый layout приложения
+│   │   ├── layout.tsx         # общий Header, InitAuth, рендер модалей
+│   │   ├── page.tsx           # Главная страница: список категорий + фильтры + продукты
+│   │   └── @modal/            # Модальные страницы (например, выбор варианта товара)
+│   ├── cart/                  # Страница корзины
+│   ├── checkout/              # Страница оформления заказа
+│   ├── order-success/         # Благодарность после заказа
+│   └── product/[id]/page.tsx  # Страница товара (для не-пицц)
+│
+├── prisma/
+│   ├── schema.prisma          # Описание моделей БД
+│   ├── migrations/ ...        # Сгенерированные миграции
+│   ├── constants.ts           # Начальные данные для seed
+│   ├── seed.ts                # Сценарий заполнения БД
+│   └── prisma-client.ts       # Экземпляр PrismaClient (c глобальным кэшем)
+│
+├── shared/
+│   ├── components/
+│   │   └── shared/ ...        # Общие UI-компоненты (Header, ProductCard, CartDrawer и т. д.)
+│   │   └── ui/ ...            # Расширения Radix Primitives (Button, Input, Dialog, Slider…)
+│   ├── constants/             # Словари (pizza-sizes, pizza-types и т. д.)
+│   ├── hooks/                 # Кастомные React-хуки (useFilters, useCategories, useSort…)
+│   ├── lib/                   # Утилиты (расчёт цены пиццы, детали корзины, cn)
+│   └── services/              # Клиентские API-обёртки (axiosInstance, auth, cart, orders…)
+│
+├── public/                    # Статические файлы (logo, картинки ингредиентов и т. д.)
+│
+├── styles/
+│   └── globals.css            # Tailwind CSS, CSS-переменные (цвета, радиусы и т. д.)
+│
+├── .env.example               # Образец переменных окружения
+├── next.config.ts             # Конфиг Next.js (по умолчанию пустой)
+├── tailwind.config.ts         # Настройка Tailwind (пути, темы, плагины)
+├── postcss.config.mjs         # PostCSS (TailwindCSS)
+├── tsconfig.json              # TypeScript config
+└── package.json               # Скрипты и зависимости
+```
